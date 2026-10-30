@@ -16,5 +16,11 @@ public record Transaction(String step, String type, String amount, String nameOr
                 values.get(9),
                 values.get(10)
         );
+        validaStep(values);
+    }
+    private static void validaStep(List<String> valores){
+        int i = Integer.parseInt(valores.get(0));
+        if(i <= 0)
+            System.out.println("Valor do campo Step incomum para linha."+valores.toString());
     }
 }
