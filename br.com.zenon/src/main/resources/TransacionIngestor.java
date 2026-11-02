@@ -42,6 +42,9 @@ public class TransacionIngestor {
             System.out.println("SOLUÇAO OFICIAL");
             List<Transaction> transactions = new ArrayList<>(read(caminhoRedundante));
             System.out.println(transactions.size());
+            transactions.forEach(System.out::println);
+//            var fraudAnalyser = new FraudAnalyzer(transactions);
+//            System.out.println("Total de fraudes"+fraudAnalyser.countFrauds());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -63,7 +66,10 @@ public class TransacionIngestor {
                 if(lineCount ==1000)
                     break;
                 else{
-                    transactions.add(parseTransection(line));
+                    if(!line.isEmpty())
+                        transactions.add(parseTransection(line));
+                    else
+                        throw new IllegalArgumentException( "O campo Step não pode ser nulo ou vazio.");
                 }
             }
         }catch (Exception ex) {
