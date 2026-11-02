@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,9 +38,13 @@ public class TransacionIngestor {
         if(!transactions.isEmpty())
             transactions.forEach(t -> System.out.println(t.toString()));
         */
-        System.out.println("SOLUÇAO OFICIAL");
-        List<Transaction> transactions = new ArrayList<>(read(caminhoRedundante));
-        System.out.println(transactions.size());
+        try {
+            System.out.println("SOLUÇAO OFICIAL");
+            List<Transaction> transactions = new ArrayList<>(read(caminhoRedundante));
+            System.out.println(transactions.size());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
     public static List<Transaction> read(String filename){
 
@@ -57,11 +62,32 @@ public class TransacionIngestor {
 
                 if(lineCount ==1000)
                     break;
+                else{
+                    transactions.add(parseTransection(line));
+                }
             }
         }catch (Exception ex) {
             throw new RuntimeException("Erro ao ler o arquivo?" + filename, ex);
         }
         return transactions;
+    }
+
+    private static Transaction parseTransection(String line) {
+        try {
+            String[] chunks = line.split(",");
+            int step = Integer.parseInt(chunks[0]);
+            TransactionType type = TransactionType.valueOf(chunks[1]);
+            BigDecimal amount = new BigDecimal(chunks[2]);
+            var origin = new TransactionCustomer(chunks[3], new BigDecimal(chunks[4]), new BigDecimal(chunks[5]));
+            var recipient = new TransactionCustomer(chunks[6], new BigDecimal(chunks[7]), new BigDecimal(chunks[8]));
+            boolean isFraud = "1".equals(chunks[9])?true:false;
+            boolean isFlaggedFraud = "1".equals(chunks[10])?true:false;
+            return new Transaction(step,type,amount, amount, origin,recipient, isFraud,isFlaggedFraud);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Ao fazer o parse "+ line+ "|" + e);
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @org.jetbrains.annotations.NotNull
