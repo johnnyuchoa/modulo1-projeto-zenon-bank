@@ -13,17 +13,17 @@ import java.util.Scanner;
 public class TransacionIngestor {
     public static void main(String[] args) throws IOException {
         Path path = Paths.get("C:/Users/Johnny/Projetos/UNIPDS/data/paysim_with_bad_data.csv");
-        String caminhoRedundante = "C:/Users/Johnny/Projetos/UNIPDS/data/paysim_with_bad_data.csv";
+        String caminhoRedundante = "C:/Users/Johnny/Projetos/UNIPDS/data/cargaII.csv";
 
         System.out.println("Teste primario com leitura de buffer");
         BufferedReader br = new BufferedReader(new FileReader(path.toFile()));
-        while (br.readLine() != null);
+        while (br.readLine() != null) ;
         br.close();
 
         System.out.println("Imprimindo linhas lidas CSV");
 
         try {
-            if(!path.equals(null))
+            if (!path.equals(null))
                 readLineBuffers(path).stream().limit(100).forEach(linha -> System.out.println(linha));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -38,9 +38,10 @@ public class TransacionIngestor {
         if(!transactions.isEmpty())
             transactions.forEach(t -> System.out.println(t.toString()));
         */
+        List<Transaction> transactions, transactionsII;
         try {
             System.out.println("SOLUÇAO OFICIAL");
-            List<Transaction> transactions = new ArrayList<>(read(caminhoRedundante));
+            transactions = new ArrayList<>(read(caminhoRedundante));
             System.out.println(transactions.size());
             transactions.forEach(System.out::println);
 //            var fraudAnalyser = new FraudAnalyzer(transactions);
@@ -48,6 +49,13 @@ public class TransacionIngestor {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        System.out.println("AULA 6");
+        transactionsII = new ArrayList<>(read(caminhoRedundante));
+        var transactionListRepository = new TransactionListRepository(transactionsII);
+        String notFoundOriginName = "C12345";
+        transactionListRepository.printFindByOrginName(notFoundOriginName);
+        /*transactionListRepository.findByOrginName(notFoundOriginName).
+                ifPresentOrElse(System.out::println,()-> System.out.println("Transacao nao encontrada:"+notFoundOriginName));*/
     }
     public static List<Transaction> read(String filename){
 
